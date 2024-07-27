@@ -1,3 +1,5 @@
+import time
+
 class Stack:
     def __init__(self):
         self.items = []
@@ -44,14 +46,17 @@ class TowerOfHanoi:
             disk = source.pop()
             destination.push(disk)
             self._display()
+            time.sleep(1)  # Pause for 1 seconds for better visibility
         else:
             self._move_disks(n - 1, source, auxiliary, destination)
             disk = source.pop()
             destination.push(disk)
             self._display()
+            time.sleep(2)  # Pause for 2 seconds for better visibility
             self._move_disks(n - 1, auxiliary, destination, source)
 
     def solve(self):
+        print("Starting the solution...")
         self._move_disks(self.num_disks, self.source, self.destination, self.auxiliary)
 
     def _display(self):
@@ -66,8 +71,6 @@ if __name__ == '__main__':
     tower = TowerOfHanoi(num_disks)
     print("Initial State:")
     tower._display()
-    print("Solving the Tower of Hanoi:")
     tower.solve()
     print("Final State:")
     tower._display()
-
