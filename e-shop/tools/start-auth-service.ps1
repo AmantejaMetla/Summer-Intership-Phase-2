@@ -27,7 +27,17 @@ function Import-EnvFile {
     }
 }
 
-Import-EnvFile -Path $EnvFile
+$effectiveEnvFile = $EnvFile
+if (-not (Test-Path $effectiveEnvFile)) {
+    $corporateFile = "$PSScriptRoot\auth-service.env.corporate"
+    if (Test-Path $corporateFile) {
+        $effectiveEnvFile = $corporateFile
+    } else {
+        throw "Env file not found: $EnvFile`nProvide -EnvFile or add tools/auth-service.env.local."
+    }
+}
+
+Import-EnvFile -Path $effectiveEnvFile
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location "$projectRoot\auth-service"
@@ -36,5 +46,5 @@ if ($UseMysqlProfile) {
     $env:SPRING_PROFILES_ACTIVE = "mysql"
 }
 
-Write-Host "Starting auth-service with local env from: $EnvFile"
+Write-Host "Starting auth-service with env from: $effectiveEnvFile"
 mvn spring-boot:run

@@ -21,10 +21,14 @@ function Import-EnvFile {
     }
 }
 
-# Optional local MySQL credentials for mysql-profile services.
-Import-EnvFile "$root\tools\mysql.env.local"
-# Optional local auth SMTP/TOTP settings.
-Import-EnvFile "$root\tools\auth-service.env.local"
+# Prefer local env files; if missing, fall back to committed corporate env packs.
+$mysqlEnvPath = "$root\tools\mysql.env.local"
+if (-not (Test-Path $mysqlEnvPath)) { $mysqlEnvPath = "$root\tools\mysql.env.corporate" }
+Import-EnvFile $mysqlEnvPath
+
+$authEnvPath = "$root\tools\auth-service.env.local"
+if (-not (Test-Path $authEnvPath)) { $authEnvPath = "$root\tools\auth-service.env.corporate" }
+Import-EnvFile $authEnvPath
 
 $services = @(
     @{ Name = "Eureka"; Path = "eureka-server"; Profile = $false },
@@ -57,5 +61,5 @@ Start-Sleep -Seconds 2
 
 Write-Host "Started $($services.Count) backend + 1 frontend window."
 Write-Host "Wait 1-2 min for backends. Then open: Eureka http://localhost:8761  Gateway http://localhost:9090  Frontend http://localhost:3000"
-Write-Host "If mysql-profile services fail with Access denied, set tools\mysql.env.local from tools\mysql.env.example."
-Write-Host "For OTP email/TOTP dev config, set tools\auth-service.env.local from tools\auth-service.env.example."
+Write-Host "Loaded MySQL env from: $mysqlEnvPath"
+Write-Host "Loaded Auth env from: $authEnvPath"

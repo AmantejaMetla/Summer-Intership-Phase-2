@@ -44,6 +44,29 @@ Check: `java -version`, `mvn -v`, `node -v` (if using frontend).
 
 ---
 
+## Zero-repaste corporate setup (already baked in)
+
+This repo now includes:
+- `tools/auth-service.env.corporate`
+- `tools/mysql.env.corporate`
+
+Startup scripts auto-fallback to these when `.local` files do not exist.
+
+So on another laptop you can run directly without creating/pasting env files:
+
+```powershell
+cd "e-shop"
+.\start-all-services.ps1
+```
+
+or auth-only:
+
+```powershell
+.\tools\start-auth-service.ps1 -UseMysqlProfile
+```
+
+---
+
 ## Step 3 – MySQL: start and create database
 
 1. **Start MySQL**
