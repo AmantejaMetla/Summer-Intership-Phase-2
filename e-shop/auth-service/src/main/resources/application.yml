@@ -1,0 +1,72 @@
+# Default: H2 in-memory (no MySQL needed). Use profile "mysql" when MySQL is available (e.g. demo laptop).
+server:
+  port: 9081
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:h2:mem:auth_db;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  mail:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASS:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SMTP_AUTH:true}
+          starttls:
+            enable: ${SMTP_STARTTLS_ENABLE:true}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: ${JWT_SECRET:mySecretKeyForJwtTokenGenerationThatIsAtLeast256BitsLongForHS256}
+  access-token-validity-minutes: 15
+  refresh-token-validity-days: 7
+
+app:
+  otp-expiry-minutes: 10
+  reset-token-expiry-minutes: 15
+  sms:
+    enabled: ${SMS_ENABLED:false}
+    provider: ${SMS_PROVIDER:log}
+    msg91:
+      base-url: ${MSG91_BASE_URL:https://control.msg91.com/api/sendhttp.php}
+      auth-key: ${MSG91_AUTH_KEY:}
+      sender-id: ${MSG91_SENDER_ID:ESHOPP}
+      route: ${MSG91_ROUTE:4}
+    twilio:
+      base-url: ${TWILIO_BASE_URL:https://api.twilio.com/2010-04-01}
+      account-sid: ${TWILIO_ACCOUNT_SID:}
+      auth-token: ${TWILIO_AUTH_TOKEN:}
+      from-number: ${TWILIO_FROM_NUMBER:}
+  otp:
+    rabbit:
+      enabled: ${OTP_RABBIT_ENABLED:false}
+      exchange: ${OTP_RABBIT_EXCHANGE:auth.otp.exchange}
+      queue: ${OTP_RABBIT_QUEUE:auth.otp.queue}
+      routing-key: ${OTP_RABBIT_ROUTING_KEY:auth.otp}
+  totp:
+    dev-bypass-code: ${TOTP_DEV_BYPASS_CODE:000000}
+  email:
+    from: ${SMTP_FROM:no-reply@eshop.local}

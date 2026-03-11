@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-Shop API Test</title>
+  <style>
+    body { font-family: system-ui; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    input, button { padding: 0.5rem; margin: 0.25rem 0; }
+    button { cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 4px; }
+    button:hover { background: #1d4ed8; }
+    button.sec { background: #059669; }
+    button.sec:hover { background: #047857; }
+    pre { background: #f1f5f9; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9rem; }
+    .section { margin: 1.5rem 0; }
+    label { display: block; margin-top: 0.5rem; }
+    .badge { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem; margin-right: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>E-Shop API Test</h1>
+  <p>Base URL: <input type="text" id="baseUrl" value="http://localhost:9090" style="width: 280px" /></p>
+
+  <div class="section">
+    <h2>1. Login (or register)</h2>
+    <label>Email <input type="text" id="email" value="test@example.com" /></label>
+    <label>Password <input type="password" id="password" value="password123" /></label>
+    <button onclick="login()">Login</button>
+    <button onclick="register()">Register</button>
+    <p id="loginStatus"></p>
+    <p id="userInfo"></p>
+  </div>
+
+  <div class="section">
+    <h2>2. Get my profile</h2>
+    <button onclick="getMe()">GET /api/users/me</button>
+    <pre id="meResult">(click the button)</pre>
+  </div>
+
+  <div class="section">
+    <h2>3. Roles &amp; Merchant</h2>
+    <button onclick="listRoles()">List roles</button>
+    <span style="margin-left:0.5rem">Assign role: user id <input type="number" id="assignUserId" value="1" style="width:60px" /> role id <input type="number" id="assignRoleId" value="3" style="width:60px" /> (3=merchant)</span>
+    <button class="sec" onclick="assignRole()">Assign role</button>
+    <pre id="rolesResult">(click List roles)</pre>
+  </div>
+
+  <div class="section">
+    <h2>4. Merchant – My products &amp; sales</h2>
+    <button onclick="createProduct()">Create product</button>
+    <button onclick="listMyProducts()">List my products</button>
+    <button onclick="merchantSales()">Merchant sales</button>
+    <label>Update stock for product id <input type="number" id="stockProductId" value="1" style="width:60px" /> quantity <input type="number" id="stockQty" value="10" style="width:60px" /></label>
+    <button onclick="updateStock()">Update stock</button>
+    <pre id="merchantResult">(login as merchant, then use buttons)</pre>
+  </div>
+
+  <div class="section">
+    <h2>5. Catalog</h2>
+    <button onclick="getProducts()">GET /api/products</button>
+    <pre id="productsResult">(click the button)</pre>
+  </div>
+
+  <script>
+    let token = null;
+    let userId = null;
+    let roles = [];
+    function base() { return document.getElementById('baseUrl').value.replace(/\/$/, ''); }
+
+    function setUserInfo(u, r) {
+      userId = u;
+      roles = r || [];
+      const el = document.getElementById('userInfo');
+      if (!el) return;
+      if (userId != null) {
+        el.innerHTML = 'User id: <span class="badge">' + userId + '</span> Roles: ' + (roles.length ? roles.map(function(r){ return '<span class="badge">' + r + '</span>'; }).join(' ') : 'none');
+        const assignU = document.getElementById('assignUserId');
+        if (assignU && assignU.value === '1') assignU.value = String(userId);
+      } else {
+        el.textContent = '';
+      }
+    }
+
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      document.getElementById('loginStatus').textContent = '...';
+      try {
+        const r = await fetch(base() + '/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await r.json().catch(() => ({}));
+        if (r.ok) {
+          token = data.accessToken;
+          setUserInfo(data.userId, data.roles);
+          document.getElementById('loginStatus').textContent = 'Logged in. Token saved.';
+        } else {
+          document.getElementById('loginStatus').textContent = 'Failed: ' + (data.error || r.status);
+        }
+      } catch (e) {
+        document.getElementById('loginStatus').textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function register() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      document.getElementById('loginStatus').textContent = '...';
+      try {
+        const r = await fetch(base() + '/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await r.json().catch(() => ({}));
+        if (r.ok) {
+          token = data.accessToken;
+          setUserInfo(data.userId, data.roles);
+          document.getElementById('loginStatus').textContent = 'Registered and logged in. Token saved.';
+        } else {
+          document.getElementById('loginStatus').textContent = 'Failed: ' + (data.error || r.status);
+        }
+      } catch (e) {
+        document.getElementById('loginStatus').textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function getMe() {
+      const el = document.getElementById('meResult');
+      if (!token) { el.textContent = 'Login or Register first.'; return; }
+      try {
+        const r = await fetch(base() + '/api/users/me', { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await r.json().catch(() => ({}));
+        el.textContent = r.ok ? JSON.stringify(data, null, 2) : r.status + ' ' + (data.error || r.statusText);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function listRoles() {
+      const el = document.getElementById('rolesResult');
+      try {
+        const r = await fetch(base() + '/api/auth/roles');
+        const data = await r.json().catch(() => ({}));
+        el.textContent = r.ok ? JSON.stringify(data, null, 2) : r.status + ' ' + (data.error || r.statusText);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function assignRole() {
+      const el = document.getElementById('rolesResult');
+      if (!token) { el.textContent = 'Login first.'; return; }
+      const uid = document.getElementById('assignUserId').value;
+      const roleId = document.getElementById('assignRoleId').value;
+      try {
+        const r = await fetch(base() + '/api/auth/users/' + uid + '/roles', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roleId: parseInt(roleId, 10) })
+        });
+        const data = await r.json().catch(() => ({}));
+        el.textContent = r.ok ? 'Role assigned: ' + JSON.stringify(data, null, 2) : r.status + ' ' + (data.error || r.statusText);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function createProduct() {
+      const el = document.getElementById('merchantResult');
+      if (!token) { el.textContent = 'Login first.'; return; }
+      try {
+        const r = await fetch(base() + '/api/products', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'My Product', description: 'From test page', price: 29.99, category: 'Electronics', categoryId: 1, stockQuantity: 5 })
+        });
+        const data = await r.json().catch(() => ({}));
+        el.textContent = r.ok ? JSON.stringify(data, null, 2) : r.status + ' ' + (data.error || r.statusText);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function listMyProducts() {
+      const el = document.getElementById('merchantResult');
+      if (!token) { el.textContent = 'Login first.'; return; }
+      try {
+        const r = await fetch(base() + '/api/products/my', { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await r.json().catch(() => ({}));
+        el.textContent = r.ok ? JSON.stringify(data, null, 2) : r.status + ' ' + (data.error || r.statusText);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function merchantSales() {
+      const el = document.getElementById('merchantResult');
+      if (!token) { el.textContent = 'Login first.'; return; }
+      try {
+        const r = await fetch(base() + '/api/orders/merchant/sales', { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await r.json().catch(() => ({}));
+        el.textContent = r.ok ? JSON.stringify(data, null, 2) : r.status + ' (merchant/admin only) ' + (data.error || r.statusText);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function updateStock() {
+      const el = document.getElementById('merchantResult');
+      if (!token) { el.textContent = 'Login first.'; return; }
+      const pid = document.getElementById('stockProductId').value;
+      const qty = document.getElementById('stockQty').value;
+      try {
+        const r = await fetch(base() + '/api/inventory/' + pid, {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: parseInt(qty, 10) })
+        });
+        const data = await r.json().catch(() => ({}));
+        el.textContent = r.ok ? JSON.stringify(data, null, 2) : r.status + ' (owner or admin only) ' + (data.error || r.statusText);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function getProducts() {
+      const el = document.getElementById('productsResult');
+      try {
+        const r = await fetch(base() + '/api/products');
+        const data = await r.json().catch(() => ({}));
+        el.textContent = r.ok ? JSON.stringify(data, null, 2) : r.status + ' ' + (data.error || r.statusText);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>

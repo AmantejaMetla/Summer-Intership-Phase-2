@@ -1,0 +1,27 @@
+Product images – put these files in frontend/public/images/
+Use these EXACT names (e.g. .jpg or .png). One image per product.
+
+cappuccino-medium.jpg
+cappuccino-large.jpg
+latte-medium.jpg
+latte-large.jpg
+flat-white.jpg
+caramel-macchiato-medium.jpg
+caramel-macchiato-large.jpg
+espresso.jpg
+mocha-medium.jpg
+mocha-large.jpg
+white-mocha-medium.jpg
+white-mocha-large.jpg
+hot-chocolate-medium.jpg
+hot-chocolate-large.jpg
+cold-coffee-medium.jpg
+cold-coffee-large.jpg
+cold-mocha-medium.jpg
+cold-mocha-large.jpg
+iced-tea-medium.jpg
+iced-tea-large.jpg
+lemonade-medium.jpg
+lemonade-large.jpg
+sandwich-ham-cheese.jpg
+sandwich-salami-mozzarella.jpg

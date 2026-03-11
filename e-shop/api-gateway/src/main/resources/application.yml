@@ -1,0 +1,83 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      default-filters:
+        - JwtAuthentication
+      routes:
+        # Static responses (no backend) - so / and /actuator/* don't 404
+        - id: root
+          uri: http://localhost:1
+          predicates: Path=/
+          filters: StaticResponse
+        - id: actuator-health
+          uri: http://localhost:1
+          predicates: Path=/actuator/health
+          filters: StaticResponse
+        - id: actuator-info
+          uri: http://localhost:1
+          predicates: Path=/actuator/info
+          filters: StaticResponse
+        - id: test-page
+          uri: http://localhost:1
+          predicates: Path=/test
+          filters: TestPage
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: SimpleRateLimiter
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+        - id: support-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/support/**
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/api/cart/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            exposedHeaders: "Authorization"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: ${JWT_SECRET:mySecretKeyForJwtTokenGenerationThatIsAtLeast256BitsLongForHS256}

@@ -1,0 +1,10 @@
+EXTRACT AND RUN ON THE OTHER LAPTOP
+===================================
+
+1. Extract this zip to a folder (e.g. Desktop or Documents).
+   You should see: E-Shopping Case Study\ with eureka-server, api-gateway, frontend, init-db, etc. inside it.
+
+2. Open SETUP-ON-ANOTHER-LAPTOP.md in that folder and follow the steps.
+
+   That guide covers: prerequisites, MySQL, running all services, frontend, and testing.
+   For Razorpay payments see monday.md.

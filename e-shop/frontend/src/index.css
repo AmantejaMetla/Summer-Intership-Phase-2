@@ -1,0 +1,42 @@
+/* Design tokens inspired by your references: soft beige hero, clean shop with green accents */
+:root {
+  --bg-hero: #f5f0e8;
+  --bg-page: #fafaf9;
+  --bg-sidebar: #eeeeea;
+  --bg-card: #ffffff;
+  --text-dark: #2d2a26;
+  --text-muted: #6b6560;
+  --accent: #2d5a3d;
+  --accent-light: #3d7a52;
+  --border: #e5e2dd;
+  --shadow: 0 2px 12px rgba(45, 42, 38, 0.06);
+  --radius: 8px;
+  --font: 'Outfit', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg-page);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.5s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font);
+  cursor: pointer;
+}
+
+input, select {
+  font-family: var(--font);
+}

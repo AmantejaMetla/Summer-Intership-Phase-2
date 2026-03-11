@@ -1,0 +1,145 @@
+/* Shop layout: left filters (like second reference), right product grid */
+.shop-page {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 60vh;
+}
+
+@media (max-width: 900px) {
+  .shop-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+.shop-sidebar {
+  background: var(--bg-sidebar);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  height: fit-content;
+  position: sticky;
+  top: 5rem;
+}
+
+.filter-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+  color: var(--text-dark);
+}
+
+.shop-main {
+  min-width: 0;
+}
+
+.shop-promo-banner {
+  margin-bottom: 0.85rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius);
+  background: #fff8e8;
+  border: 1px solid #f1d9a7;
+  color: #7d4f0d;
+  font-size: 0.9rem;
+}
+
+.shop-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.shop-results {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.shop-sort {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.shop-sort select {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+}
+
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.active-filters-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.6rem;
+  background: var(--accent);
+  color: white;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.filter-pill button {
+  background: none;
+  border: none;
+  color: inherit;
+  padding: 0 0.2rem;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.filter-pill button:hover {
+  opacity: 1;
+}
+
+.clear-filters {
+  font-size: 0.85rem;
+  color: #c9752e;
+  background: none;
+  border: none;
+  text-decoration: none;
+}
+
+.clear-filters:hover {
+  text-decoration: underline;
+}
+
+.shop-loading {
+  color: var(--text-muted);
+  padding: 2rem;
+}
+
+.shop-api-error {
+  grid-column: 1 / -1;
+  padding: 1rem 1.25rem;
+  background: #fef3e2;
+  border: 1px solid #e8c9a0;
+  border-radius: var(--radius);
+  color: #8b5a1a;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.shop-api-error strong {
+  font-weight: 600;
+}

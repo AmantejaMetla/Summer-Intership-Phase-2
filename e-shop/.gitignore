@@ -1,0 +1,4 @@
+# Local Razorpay keys – never commit
+payment-service/razorpay-keys.yml
+tools/auth-service.env.local
+tools/mysql.env.local

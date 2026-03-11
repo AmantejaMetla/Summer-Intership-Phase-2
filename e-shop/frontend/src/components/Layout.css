@@ -1,0 +1,72 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+  background: var(--bg-hero);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+}
+
+.header-logo-img {
+  height: 2rem;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.header-nav {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.header-nav a {
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: color 0.2s;
+}
+
+.header-nav a:hover {
+  color: var(--accent);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cart-icon {
+  font-size: 1.25rem;
+  padding: 0.25rem;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.btn-text:hover {
+  color: var(--accent);
+}
+
+.nav-link {
+  font-weight: 500;
+}
+
+.layout-main {
+  min-height: calc(100vh - 60px);
+}

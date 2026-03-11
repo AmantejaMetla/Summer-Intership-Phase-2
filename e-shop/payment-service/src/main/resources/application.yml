@@ -1,0 +1,32 @@
+# Default: H2 in-memory. Use profile "mysql" when MySQL is available.
+server:
+  port: 9086
+
+spring:
+  application:
+    name: payment-service
+  config:
+    import: optional:file:./razorpay-keys.yml
+  datasource:
+    url: jdbc:h2:mem:payment_db;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+# Razorpay: from env vars or from optional file payment-service/razorpay-keys.yml (gitignored)
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:}
+  key-secret: ${RAZORPAY_KEY_SECRET:}
+  currency: ${RAZORPAY_CURRENCY:INR}
